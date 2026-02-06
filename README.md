@@ -122,6 +122,42 @@ Combined with [MESH Protocol](https://github.com/mmorris35/mesh-protocol), data 
 
 **Zero-trust IoT. Your sensors, anywhere. Your data, encrypted. Your keys, your rules.**
 
+### 📻 Off-Grid: LoRa / Meshtastic Integration
+
+No internet? No problem. AMP works with [Meshtastic](https://meshtastic.org/) LoRa mesh networks.
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                 WILDERNESS (no infrastructure)             │
+│                                                            │
+│  🌡️ Weather      🦌 Trail Cam      💧 Stream Gauge         │
+│  (solar+LoRa)    (solar+LoRa)      (solar+LoRa)            │
+│       │               │                 │                  │
+│       └────── LoRa Mesh (miles of range) ──┘               │
+│                       │                                    │
+│            tiny announcement packets                       │
+│                       │                                    │
+│                ┌──────▼──────┐                            │
+│                │   Gateway   │  ← LoRa + WiFi/Cell        │
+│                │  (amp-mini) │     syncs when online       │
+│                └──────┬──────┘                            │
+│                       │                                    │
+│            full AMP records sync to MESH                   │
+└────────────────────────────────────────────────────────────┘
+```
+
+**How it works:**
+- Sensors store readings locally (amp-storage)
+- Broadcast tiny announcements over LoRa: `"temp=72°F,humid=45%"`
+- Gateway collects announcements, syncs full records when internet available
+- Encrypted end-to-end, even over radio
+
+**$35 Meshtastic node + solar panel = years of autonomous operation.**
+
+Use cases: backcountry weather, agricultural monitoring, wildlife tracking, disaster recovery networks, anywhere infrastructure doesn't reach.
+
+**Post-infrastructure IoT.** No cell towers. No WiFi. Just radios, sun, and math.
+
 This is the IoT we were promised.
 
 ---
