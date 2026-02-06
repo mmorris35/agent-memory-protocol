@@ -46,6 +46,56 @@ There's no standard. No interoperability. Vendor lock-in everywhere.
 
 **Any agent. Any backend. One protocol.**
 
+---
+
+## 🌡️ Killer Use Case: Sovereign IoT Sensor Network
+
+AMP isn't just for AI agents. It's for **anything that produces data worth remembering**.
+
+**The old way (cloud-dependent):**
+```
+Sensor → Cloud API → Their Database → Their Dashboard
+               └── Your data on their server
+               └── Internet required 24/7
+               └── Monthly subscription forever
+               └── "Service discontinued" email someday
+```
+
+**The AMP way (local-first):**
+```
+┌─────────────────────────────────────────────────────────┐
+│                   Your Network                          │
+│                                                         │
+│  ┌────────────┐  ┌────────────┐  ┌────────────┐        │
+│  │Temp Sensor │  │ Humidity   │  │Power Meter │        │
+│  │(amp-storage)│  │(amp-storage)│  │(amp-storage)│        │
+│  │  $5 ESP32  │  │ $10 Pi Zero│  │  $5 ESP32  │        │
+│  └─────┬──────┘  └─────┬──────┘  └─────┬──────┘        │
+│        └───────────────┼───────────────┘               │
+│                        ▼                                │
+│        ┌───────────────────────────────┐               │
+│        │  MESH Directory (optional)    │               │
+│        │  Discovers all local sensors  │               │
+│        └───────────────┬───────────────┘               │
+│                        ▼                                │
+│        Query from anywhere on your network:            │
+│        $ mesh search "garage temperature"              │
+│        $ mesh search "humidity > 60%"                  │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Each sensor runs amp-storage (Tier -1):**
+- Stores readings locally with TTL (auto-expires old data)
+- Serves data on demand to anyone on your network
+- No cloud dependency, no subscription, no data harvesting
+- Runs on $5 hardware
+
+**This is the IoT we were promised** before everything became a cloud subscription.
+
+Combined with [MESH Protocol](https://github.com/mmorris35/mesh-protocol), your sensors become a federated, searchable, private data network.
+
+---
+
 ## Core Concepts
 
 ### Memory Types
