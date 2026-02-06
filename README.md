@@ -86,13 +86,43 @@ Sensor → Cloud API → Their Database → Their Dashboard
 
 **Each sensor runs amp-storage (Tier -1):**
 - Stores readings locally with TTL (auto-expires old data)
-- Serves data on demand to anyone on your network
+- Serves data on demand
 - No cloud dependency, no subscription, no data harvesting
 - Runs on $5 hardware
 
-**This is the IoT we were promised** before everything became a cloud subscription.
+**But here's the magic: it doesn't have to be on your local network.**
 
-Combined with [MESH Protocol](https://github.com/mmorris35/mesh-protocol), your sensors become a federated, searchable, private data network.
+Combined with [MESH Protocol](https://github.com/mmorris35/mesh-protocol), data is **encrypted with keys you control**. Sensors can be anywhere—public internet, cellular, remote locations:
+
+```
+🏔️ Remote Cabin        🏠 Rental Property      🚗 Vehicle
+   (satellite)            (4G LTE)              (cellular)
+        │                      │                     │
+        └──────────────────────┼─────────────────────┘
+                               │
+                        PUBLIC INTERNET
+                        (data encrypted)
+                               │
+                        ┌──────▼──────┐
+                        │    MESH     │
+                        │  Directory  │
+                        └──────┬──────┘
+                               │
+                    Only YOUR keys decrypt
+                               │
+                        ┌──────▼──────┐
+                        │ Your Phone  │
+                        │ Anywhere    │
+                        └─────────────┘
+```
+
+- **Share access?** Give someone a key.
+- **Revoke access?** Delete the key. Cryptographically enforced.
+- **Sensor compromised?** Data's encrypted. Attacker gets noise.
+
+**Zero-trust IoT. Your sensors, anywhere. Your data, encrypted. Your keys, your rules.**
+
+This is the IoT we were promised.
 
 ---
 
