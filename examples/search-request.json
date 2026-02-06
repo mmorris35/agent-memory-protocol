@@ -1,0 +1,8 @@
+{
+  "operation": "search",
+  "query": "how to handle authentication token expiration gracefully",
+  "type": "lesson",
+  "tags": ["auth", "security"],
+  "limit": 5,
+  "min_score": 0.7
+}

@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "healthy": true,
+  "version": "1.0.0",
+  "protocol": "AMP/0.1",
+  "stats": {
+    "lessons": 247,
+    "checkpoints": 89,
+    "snippets": 15832,
+    "total_records": 16168
+  },
+  "capabilities": {
+    "embedding_model": "nomic-embed-text",
+    "max_content_length": 32000,
+    "supported_types": ["lesson", "checkpoint", "snippet"]
+  }
+}

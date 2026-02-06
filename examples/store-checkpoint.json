@@ -1,0 +1,25 @@
+{
+  "operation": "store",
+  "record": {
+    "type": "checkpoint",
+    "agent": "dev-agent-01",
+    "working_on": "Implementing OAuth2 flow for GitHub integration",
+    "state": {
+      "decisions": [
+        "Using authorization code flow (not implicit) for security",
+        "Storing tokens in encrypted database column, not cookies",
+        "Refresh token rotation enabled"
+      ],
+      "blockers": [
+        "Waiting for GitHub OAuth app credentials from DevOps"
+      ],
+      "artifacts": [
+        "src/auth/github.ts",
+        "src/auth/token-store.ts"
+      ],
+      "flags": ["IN_PROGRESS", "BLOCKED"]
+    },
+    "project": "myapp-backend",
+    "session_id": "session_abc123"
+  }
+}

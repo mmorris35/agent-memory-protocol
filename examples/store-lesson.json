@@ -1,0 +1,10 @@
+{
+  "operation": "store",
+  "record": {
+    "type": "lesson",
+    "title": "Always validate user input before database queries",
+    "content": "SQL injection remains one of the most common vulnerabilities. Even with ORMs, raw queries can slip through. Always:\n\n1. Use parameterized queries\n2. Validate input types before processing\n3. Escape special characters when parameterization isn't possible\n4. Use allowlists for dynamic column/table names\n\nThis applies to all databases, not just SQL—NoSQL injection is real too.",
+    "tags": ["security", "sql", "validation", "databases"],
+    "severity": "critical"
+  }
+}

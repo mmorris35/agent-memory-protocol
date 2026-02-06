@@ -1,0 +1,30 @@
+{
+  "success": true,
+  "results": [
+    {
+      "id": "lesson_8f3a2b1c",
+      "score": 0.94,
+      "record": {
+        "type": "lesson",
+        "title": "Implement token refresh before expiration, not after",
+        "content": "Don't wait for a 401 to refresh tokens. Instead:\n\n1. Track token expiration time locally\n2. Refresh proactively when 80% of lifetime has passed\n3. Queue requests during refresh to avoid race conditions\n4. Have a fallback for refresh failures (re-auth prompt)\n\nThis prevents jarring user experiences and request failures.",
+        "tags": ["auth", "tokens", "ux"],
+        "severity": "info",
+        "created_at": 1707148800000
+      }
+    },
+    {
+      "id": "lesson_2d4e6f8a",
+      "score": 0.87,
+      "record": {
+        "type": "lesson",
+        "title": "Store refresh tokens securely, separate from access tokens",
+        "content": "Refresh tokens are high-value targets. Best practices:\n\n- Store in HttpOnly cookies (web) or secure keychain (mobile)\n- Never expose to JavaScript\n- Implement rotation on each use\n- Set reasonable expiration (days, not months)",
+        "tags": ["auth", "security", "tokens"],
+        "severity": "warning",
+        "created_at": 1706889600000
+      }
+    }
+  ],
+  "total": 2
+}
