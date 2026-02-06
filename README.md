@@ -7,6 +7,22 @@
 
 ---
 
+## 🏠 Self-Host From Home — No VPS Required
+
+```bash
+# Start your AMP node
+./amp-mini --port 8765
+
+# Expose to internet via Cloudflare Tunnel (free)
+cloudflared tunnel --url http://localhost:8765
+```
+
+No public IP. No open ports. No monthly VPS bills. Run from behind your home NAT—Cloudflare handles the rest.
+
+Combined with [MESH Protocol](https://github.com/mmorris35/mesh-protocol), your node becomes discoverable, searchable, and federated. See [MESH DEPLOYMENT.md](https://github.com/mmorris35/mesh-protocol/blob/main/DEPLOYMENT.md) for details.
+
+---
+
 ## The Problem
 
 AI agents are smart but forgetful. Every session starts from zero. Context windows are finite. Hard-won lessons vanish when the conversation ends.
