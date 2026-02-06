@@ -6,11 +6,69 @@ AMP is a protocol, not a product. Multiple implementations can coexist, targetin
 
 | Tier | Codename | Target Hardware | Search | RAM | Use Case |
 |------|----------|-----------------|--------|-----|----------|
+| **Tier -1** | amp-storage | Pi Zero v1 / ESP32 | ❌ None | <20MB | MESH content server |
 | **Tier 0** | amp-pico | Pi Zero 2W | Keyword (FTS5) | <50MB | Edge, IoT, personal |
 | **Tier 1** | amp-mini | Pi 4 (2GB+) | Semantic | ~1GB | Home server, small team |
 | **Tier 2** | nellie-rs | Dev server | Semantic + Code | 2GB+ | Developer, enterprise |
 
 All tiers implement the same AMP protocol. Clients can't tell the difference (except search quality).
+
+---
+
+## Tier -1: amp-storage
+
+> *"Just a content server"*
+
+No local search. Stores records, serves them by ID, relies on MESH directories for discovery.
+
+### Target Hardware
+
+| Component | Minimum | Recommended |
+|-----------|---------|-------------|
+| Board | Pi Zero v1 | Pi Zero W |
+| RAM | 256MB | 512MB |
+| Storage | 4GB SD | 8GB SD |
+| Network | Any | WiFi |
+| Cost | ~$10 | ~$15 |
+
+### Technical Specifications
+
+```yaml
+binary_size: <1MB
+ram_usage: <20MB working set
+language: Rust
+database: SQLite (minimal, single table)
+search: NONE (returns 501)
+transport: HTTP/1.1
+```
+
+### Operations Supported
+
+| Operation | Status | Notes |
+|-----------|--------|-------|
+| `store` | ✅ | Full AMP record storage |
+| `get` | ✅ | Serve by ID |
+| `delete` | ✅ | Remove record |
+| `list` | ✅ | Paginated, filter by type |
+| `status` | ✅ | Health + counts |
+| `search` | ❌ | Returns 501 Not Implemented |
+
+### Why No Search?
+
+Search requires indexing (FTS5, vectors, etc). Indexing requires RAM and CPU. By skipping search entirely:
+- Smaller binary
+- Less RAM
+- Faster startup
+- Runs on weaker hardware
+
+Discovery happens at the MESH layer—directories index your content, users find it there, then fetch directly from you.
+
+### Ideal For
+
+- MESH network participants with minimal resources
+- IoT devices contributing sensor/log data
+- Distributed storage nodes
+- "I just want to publish, let the network find me"
 
 ---
 
