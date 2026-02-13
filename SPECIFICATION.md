@@ -1,6 +1,6 @@
 # Agent Memory Protocol (AMP)
 
-> **Draft Specification v0.1** | February 2026
+> **Draft Specification v0.2** | February 2026
 
 A standard protocol for persistent memory in AI agent systems. Enables agents to store, recall, and manage knowledge across sessions with interoperable backends.
 
@@ -128,6 +128,7 @@ interface Snippet extends MemoryRecord {
 | `delete` | Remove a record | MUST |
 | `list` | List records with filters | SHOULD |
 | `status` | Server health and statistics | SHOULD |
+| `agent_status` | Agent-specific status and state | SHOULD |
 
 ### 3.2 store
 
@@ -291,6 +292,43 @@ Returns server health and statistics.
 }
 ```
 
+### 3.8 agent_status
+
+Returns status for a specific agent, including checkpoint count, current task, and working state. This is distinct from `status` which returns server-wide health.
+
+**Request:**
+```json
+{
+  "operation": "agent_status",
+  "agent": "radarr"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "agent": "radarr",
+  "status": "idle",
+  "checkpoint_count": 17,
+  "current_task": null,
+  "last_updated": 1707235200000
+}
+```
+
+**Status Values:**
+
+| Status | Description |
+|--------|-------------|
+| `idle` | Agent has no active task |
+| `in_progress` | Agent is working on a task |
+| `blocked` | Agent is blocked, waiting on external input |
+
+**Use Cases:**
+- Agent resuming after restart checks its own state
+- Orchestrator monitoring multiple agents
+- Coordination between agents sharing a memory store
+
 ---
 
 ## 4. Transport Bindings
@@ -320,7 +358,8 @@ Exposed as MCP tools:
     {"name": "amp_get", "description": "Get record by ID"},
     {"name": "amp_delete", "description": "Delete a record"},
     {"name": "amp_list", "description": "List records with filters"},
-    {"name": "amp_status", "description": "Get server status"}
+    {"name": "amp_status", "description": "Get server status"},
+    {"name": "amp_agent_status", "description": "Get agent-specific status"}
   ]
 }
 ```
@@ -334,6 +373,7 @@ amp get lesson_a1b2c3d4
 amp delete lesson_a1b2c3d4
 amp list --type checkpoint --agent radarr
 amp status
+amp agent-status radarr
 ```
 
 ---
@@ -400,11 +440,19 @@ Nellie's current API maps directly to AMP:
 | Nellie Tool | AMP Operation |
 |-------------|---------------|
 | `add_lesson` | `store` (type: lesson) |
+| `list_lessons` | `list` (type: lesson) |
 | `search_lessons` | `search` (type: lesson) |
+| `delete_lesson` | `delete` |
 | `add_checkpoint` | `store` (type: checkpoint) |
 | `get_recent_checkpoints` | `list` (type: checkpoint) |
+| `search_checkpoints` | `search` (type: checkpoint) |
 | `search_code` | `search` (type: snippet) |
 | `get_status` | `status` |
+| `get_agent_status` | `agent_status` |
+| `index_repo` | `index` |
+| `trigger_reindex` | `reindex` |
+| `full_reindex` | `full_reindex` |
+| `diff_index` | `diff_index` |
 
 ### 8.2 MCP Memory Servers
 
@@ -416,27 +464,128 @@ These systems have richer models (knowledge graphs, memory hierarchies). AMP pro
 
 ---
 
-## 9. Future Considerations
+## 9. Administrative Operations
 
-### 9.1 Memory Hierarchies
+Administrative operations manage the memory store itself (indexing, maintenance). These are OPTIONAL—implementations MAY support them but are not required for AMP compliance.
+
+### 9.1 Overview
+
+| Operation | Description | Required |
+|-----------|-------------|----------|
+| `index` | Index a repository or directory | MAY |
+| `reindex` | Re-index specific path | MAY |
+| `full_reindex` | Complete rebuild of all indices | MAY |
+| `diff_index` | Show changes since last index | MAY |
+
+### 9.2 index
+
+Triggers indexing of a path (repository, directory) for code/snippet search.
+
+**Request:**
+```json
+{
+  "operation": "index",
+  "path": "/home/user/projects/my-repo",
+  "recursive": true
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "files_indexed": 142,
+  "chunks_created": 1847,
+  "duration_ms": 3200
+}
+```
+
+### 9.3 reindex
+
+Forces re-indexing of a previously indexed path. Useful when file content has changed but the watcher missed it.
+
+**Request:**
+```json
+{
+  "operation": "reindex",
+  "path": "/home/user/projects/my-repo/src/main.rs"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "chunks_updated": 12
+}
+```
+
+### 9.4 full_reindex
+
+Complete rebuild of all indices. Expensive operation—use sparingly.
+
+**Request:**
+```json
+{
+  "operation": "full_reindex"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "files_indexed": 2847,
+  "chunks_created": 34291,
+  "duration_ms": 45000
+}
+```
+
+### 9.5 diff_index
+
+Returns paths that have changed since the last index operation. Useful for debugging or incremental processing.
+
+**Request:**
+```json
+{
+  "operation": "diff_index",
+  "path": "/home/user/projects/my-repo"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "added": ["src/new_file.rs"],
+  "modified": ["src/main.rs", "Cargo.toml"],
+  "deleted": ["src/old_file.rs"]
+}
+```
+
+---
+
+## 10. Future Considerations
+
+### 10.1 Memory Hierarchies
 
 Core memory vs. archival memory (MemGPT-style) may warrant standard representation.
 
-### 9.2 Memory Sharing Protocol
+### 10.2 Memory Sharing Protocol
 
 Standard for syncing/federating memory across instances.
 
-### 9.3 Forgetting
+### 10.3 Forgetting
 
 TTL, importance decay, and explicit retention policies.
 
-### 9.4 Provenance
+### 10.4 Provenance
 
 Tracking where memories came from (which conversation, which file, which agent).
 
 ---
 
-## 10. Reference Implementation
+## 11. Reference Implementation
 
 **Nellie** (https://github.com/mmorris35/nellie-rs) serves as the reference implementation of AMP.
 
